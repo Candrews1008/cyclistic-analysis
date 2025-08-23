@@ -1,11 +1,13 @@
-# cyclistic-analysis
+# Cyclistic Bike-Share Analysis
 
-## Setup
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+This project analyzes Cyclistic bike-share data to uncover usage patterns, differences between member and casual riders, and insights for marketing strategies.  
+The workflow follows the [Google Data Analytics Capstone] steps: data cleaning, analysis, and visualization.
 
-## Clean
-python scripts/01_clean.py --raw-dir data/raw --clean-dir data/clean --out trips_clean.parquet --infer-all
+---
 
-## EDA
-Open `notebooks/01_eda.ipynb` → Run All → see PNGs in `visuals/`.
+## 🚀 Quickstart
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/Candrews1008/cyclistic-analysis.git
+cd cyclistic-analysis
