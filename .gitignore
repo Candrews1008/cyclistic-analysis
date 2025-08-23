@@ -1,0 +1,14 @@
+cat > .gitignore << 'EOF'
+# data (keep big/raw files out of git)
+data/
+*.parquet
+
+# local env / tools
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+anaconda_projects/
+
+# OS/editor noise
+.DS_Store
+*.code-workspace
