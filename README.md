@@ -54,14 +54,14 @@ Example visuals:
 
 ---
 
-## 📊 Tools Used
+## Tools Used
 - **Python** (pandas, DuckDB, matplotlib, pyarrow)
 - **Jupyter Notebook** for EDA
 - **Tableau** for interactive dashboards
 
 ---
 
-## 📂 Repo Structure
+## Repo Structure
 ```
 cyclistic-analysis/
 │
