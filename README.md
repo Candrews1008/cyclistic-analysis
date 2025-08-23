@@ -5,7 +5,7 @@ The workflow follows the [Google Data Analytics Capstone] steps: data cleaning, 
 
 ---
 
-## 🚀 Quickstart
+## Quickstart
 
 ### 1. Clone the repo
 ```bash
