@@ -1,0 +1,86 @@
+---
+title: "Cyclistic: Member vs Casual Usage (DuckDB-powered)"
+author: "Cole Andrews"
+format:
+  html:
+    toc: true
+    self-contained: true
+    theme: cosmo
+jupyter: python3
+execute:
+  echo: true       # turn off later if you want
+  warning: true
+  message: true
+  error: true
+---
+
+```{python}
+from pathlib import Path
+import duckdb, pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+p = Path("../data/clean/trips_clean.parquet")  # .qmd lives in reports/, so go up one
+print("Data exists:", p.exists(), "| Path:", p)
+assert p.exists(), "Missing Parquet. Run: python scripts/01_clean.py"
+
+con = duckdb.connect()
+
+freq = con.sql("""
+  SELECT member_casual, COUNT(*) AS rides
+  FROM read_parquet(?)
+  GROUP BY 1
+  ORDER BY 1
+""", params=[str(p)]).df()
+
+dur = con.sql("""
+  SELECT member_casual, AVG(duration_min) AS avg_min, MEDIAN(duration_min) AS median_min
+  FROM read_parquet(?)
+  GROUP BY 1
+  ORDER BY 1
+""", params=[str(p)]).df()
+
+print(freq)
+print(dur.round(1))
+
+## Average Ride Duration by Rider Type
+
+ax = dur.set_index("member_casual")["avg_min"].plot(kind="bar", figsize=(5,3))
+ax.set_title("Average Ride Duration (min) by Rider Type")
+ax.set_xlabel(""); ax.set_ylabel("Minutes")
+plt.tight_layout(); plt.show()
+
+## Ride Volume by Weekday (Heatmap)
+
+weekday_order = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+
+wday = con.sql(f"""
+  SELECT member_casual, strftime(started_at, '%a') AS weekday, COUNT(*) AS rides
+  FROM read_parquet(?)
+  GROUP BY 1,2
+  ORDER BY 1,2
+""", params=[str(p)]).df()
+
+wday["weekday"] = pd.Categorical(wday["weekday"], categories=weekday_order, ordered=True)
+piv = wday.pivot(index="member_casual", columns="weekday", values="rides").fillna(0)
+
+plt.figure(figsize=(7,3))
+sns.heatmap(piv, annot=False)
+plt.title("Ride Volume by Weekday"); plt.xlabel(""); plt.ylabel("")
+plt.tight_layout(); plt.show()
+
+## Rides by Hour of Day
+
+hour = con.sql("""
+  SELECT member_casual, CAST(strftime(started_at, '%H') AS INTEGER) AS hour_of_day, COUNT(*) AS rides
+  FROM read_parquet(?)
+  GROUP BY 1,2
+  ORDER BY hour_of_day
+""", params=[str(p)]).df()
+
+plt.figure(figsize=(6,3.3))
+for typ, sub in hour.groupby("member_casual"):
+    plt.plot(sub["hour_of_day"], sub["rides"], marker="o", label=typ)
+plt.title("Rides by Hour of Day"); plt.xlabel("Hour of Day (0–23)"); plt.ylabel("Rides"); plt.legend()
+plt.tight_layout(); plt.show()
+```
