@@ -8,7 +8,7 @@ format:
     theme: cosmo
 jupyter: python3
 execute:
-  echo: true       # turn off later if you want
+  echo: true
   warning: true
   message: true
   error: true
@@ -20,7 +20,8 @@ import duckdb, pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-p = Path("../data/clean/trips_clean.parquet")  # .qmd lives in reports/, so go up one
+p = Path("../data/clean/trips_clean.parquet")
+df = pd.read_parquet(p)
 print("Data exists:", p.exists(), "| Path:", p)
 assert p.exists(), "Missing Parquet. Run: python scripts/01_clean.py"
 
@@ -83,4 +84,13 @@ for typ, sub in hour.groupby("member_casual"):
     plt.plot(sub["hour_of_day"], sub["rides"], marker="o", label=typ)
 plt.title("Rides by Hour of Day"); plt.xlabel("Hour of Day (0–23)"); plt.ylabel("Rides"); plt.legend()
 plt.tight_layout(); plt.show()
+
+## KPIs
+
+total_rides = f"{len(df):,}"
+avg_min = df["duration_min"].mean()
+med_min = df["duration_min"].median()
+avg_str, med_str = f"{avg_min:.2f}", f"{med_min:.2f}"
 ```
+Total rides: `{python} total_rides`   Avg duration (min): `{python} avg_str`   Median duration (min): `{python} med_str`
+
