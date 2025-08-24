@@ -56,6 +56,14 @@ data/raw/
 ### 5. Clean the data
 ```bash
 python scripts/01_clean.py --raw-dir data/raw --clean-dir data/clean --out trips_clean.parquet --infer-all
+
+
+# render (Linux/macOS)
+export QUARTO_PYTHON="$PWD/.venv/bin/python"
+quarto render reports/cyclistic_report.qmd
+
+# KPI results
+Total rides 5,523,010 · Members 63.6% · Avg duration 14.9 min (median 10.0 min)
 ```
 
 ### 6. Run exploratory analysis
